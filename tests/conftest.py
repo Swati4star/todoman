@@ -3,7 +3,6 @@ from uuid import uuid4
 
 import pytest
 from click.testing import CliRunner
-from hypothesis import HealthCheck, settings, Verbosity
 
 from todoman import model
 
@@ -46,18 +45,3 @@ def create(tmpdir):
         )
 
     return inner
-
-
-settings.register_profile("ci", settings(
-    max_examples=1000,
-    verbosity=Verbosity.verbose,
-    suppress_health_check=[HealthCheck.too_slow]
-))
-settings.register_profile("deterministic", settings(
-    derandomize=True,
-))
-
-if os.getenv('DETERMINISTIC_TESTS', 'false').lower() == 'true':
-    settings.load_profile("deterministic")
-elif os.getenv('CI', 'false').lower() == 'true':
-    settings.load_profile("ci")

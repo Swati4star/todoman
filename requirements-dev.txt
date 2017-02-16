@@ -1,5 +1,4 @@
 flake8
 flake8-import-order
-hypothesis
 pytest
 pytest-cov

@@ -1,10 +1,8 @@
 import datetime
 
-import hypothesis.strategies as st
 import pytest
 import pytz
 from dateutil.tz import tzlocal
-from hypothesis import given
 
 from todoman.cli import cli
 from todoman.model import Database, FileTodo
@@ -230,49 +228,6 @@ def test_default_due2(tmpdir, runner, create, default_database):
     todos = {t.summary: t for t in default_database.todos(all=True)}
     assert todos['aaa'].due.date() == todos['bbb'].due.date()
     assert todos['ccc'].due == todos['bbb'].due - datetime.timedelta(hours=23)
-
-
-def test_sorting_fields(tmpdir, runner, default_database):
-    tasks = []
-    for i in range(1, 10):
-        days = datetime.timedelta(days=i)
-
-        todo = FileTodo(new=True)
-        todo.list = next(default_database.lists())
-        todo.due = datetime.datetime.now() + days
-        todo.created_at = datetime.datetime.now() - days
-        todo.summary = 'harhar{}'.format(i)
-        tasks.append(todo)
-
-        todo.save()
-
-    fields = (
-        'id',
-        'uid',
-        'summary',
-        'due',
-        'priority',
-        'created_at',
-        'completed_at',
-        'dtstamp',
-        'status',
-        'description',
-        'location',
-        'categories',
-    )
-
-    @given(sort_key=st.lists(
-        st.sampled_from(fields + tuple('-' + x for x in fields)),
-        unique=True
-    ))
-    def run_test(sort_key):
-        sort_key = ','.join(sort_key)
-        result = runner.invoke(cli, ['list', '--sort', sort_key])
-        assert not result.exception
-        assert result.exit_code == 0
-        assert len(result.output.strip().splitlines()) == len(tasks)
-
-    run_test()
 
 
 def test_sorting_output(tmpdir, runner, create):
