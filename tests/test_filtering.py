@@ -80,11 +80,11 @@ def test_done_only(tmpdir, runner, create):
     assert not result.output.strip()
 
     tmpdir.mkdir('list_one')
-    runner.invoke(cli, ['new', '-l', 'list_one', 'haha'])
+    result = runner.invoke(cli, ['new', '-l', 'list_one', 'haha'])
     runner.invoke(cli, ['new', '-l', 'list_one', 'hoho'])
     runner.invoke(cli, ['new', '-l', 'list_one', 'harhar'])
 
-    runner.invoke(cli, ['list', 'done', '1'])
+    runner.invoke(cli, ['list', 'done', result.split(" ")[0]])
     result = runner.invoke(cli, ['list', '--done-only'])
     assert not result.exception
     assert 'haha' in result.output
