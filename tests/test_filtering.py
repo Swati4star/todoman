@@ -85,6 +85,7 @@ def test_done_only(tmpdir, runner, create):
     runner.invoke(cli, ['new', '-l', 'list_one', 'harhar'])
 
     runner.invoke(cli, ['list', 'done', result.output.split(" ")[0]])
+    print(result.output.split(" ")[0])
     result = runner.invoke(cli, ['list', '--done-only'])
     assert not result.exception
     assert 'haha' in result.output
